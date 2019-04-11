@@ -1,21 +1,23 @@
-/*
- * Pajazzo Stoned Visuals
- * 
- * Copyright (C) 2019  Alexander Kraus <nr4@z10.info>
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* Pajazzo Urban Flow Visuals
+* Copyright (C) 2019  Alexander Kraus <nr4@z10.info>
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#version 130
+
+uniform float iTime;
+uniform vec2 iResolution;
 
 // Global constants
 const float pi = acos(-1.);
@@ -73,8 +75,8 @@ void rot(in vec3 p, out mat3 rot)
 // 2D box
 void dbox(in vec2 p, in vec2 b, out float dst)
 {
-  	vec2 d = abs(p) - b;
-  	dst = length(max(d,0.0)) + min(max(d.x,d.y),0.0); 
+    vec2 d = abs(p) - b;
+    dst = length(max(d,0.0)) + min(max(d.x,d.y),0.0); 
 }
 
 // 2D circle
@@ -89,24 +91,24 @@ void dcircle(in vec2 x, in float r, out float dst)
 // Signed distance to a 2D triangle
 void dtriangle( in vec2 p0, in vec2 p1, in vec2 p2, in vec2 p, out float dst)
 {
-	vec2 e0 = p1 - p0;
-	vec2 e1 = p2 - p1;
-	vec2 e2 = p0 - p2;
+    vec2 e0 = p1 - p0;
+    vec2 e1 = p2 - p1;
+    vec2 e2 = p0 - p2;
 
-	vec2 v0 = p - p0;
-	vec2 v1 = p - p1;
-	vec2 v2 = p - p2;
+    vec2 v0 = p - p0;
+    vec2 v1 = p - p1;
+    vec2 v2 = p - p2;
 
-	vec2 pq0 = v0 - e0*clamp( dot(v0,e0)/dot(e0,e0), 0.0, 1.0 );
-	vec2 pq1 = v1 - e1*clamp( dot(v1,e1)/dot(e1,e1), 0.0, 1.0 );
-	vec2 pq2 = v2 - e2*clamp( dot(v2,e2)/dot(e2,e2), 0.0, 1.0 );
+    vec2 pq0 = v0 - e0*clamp( dot(v0,e0)/dot(e0,e0), 0.0, 1.0 );
+    vec2 pq1 = v1 - e1*clamp( dot(v1,e1)/dot(e1,e1), 0.0, 1.0 );
+    vec2 pq2 = v2 - e2*clamp( dot(v2,e2)/dot(e2,e2), 0.0, 1.0 );
     
     float s = sign( e0.x*e2.y - e0.y*e2.x );
     vec2 d = min( min( vec2( dot( pq0, pq0 ), s*(v0.x*e0.y-v0.y*e0.x) ),
-                       vec2( dot( pq1, pq1 ), s*(v1.x*e1.y-v1.y*e1.x) )),
-                       vec2( dot( pq2, pq2 ), s*(v2.x*e2.y-v2.y*e2.x) ));
+                    vec2( dot( pq1, pq1 ), s*(v1.x*e1.y-v1.y*e1.x) )),
+                    vec2( dot( pq2, pq2 ), s*(v2.x*e2.y-v2.y*e2.x) ));
 
-	dst = -sqrt(d.x)*sign(d.y);
+    dst = -sqrt(d.x)*sign(d.y);
 }
 // End of (c) 2014 Inigo Quilez (iq); https://www.shadertoy.com/view/XsXSz4
 
@@ -148,7 +150,7 @@ void color(in float scale, out vec3 col)
         vec3(0.90,0.63,0.12),
         vec3(0.92,0.72,0.14)
     );
-	float index = floor(scale*float(N)), 
+    float index = floor(scale*float(N)), 
         remainder = scale*float(N)-index;
     col = mix(colors[int(index)],colors[int(index)+1], remainder);
 }
@@ -157,7 +159,7 @@ void color(in float scale, out vec3 col)
 void dvoronoi(in vec2 x, out float d, out vec2 ind)
 {
     vec2 y = floor(x);
-   	float ret = 1.;
+    float ret = 1.;
     
     //find closest control point. ("In which cell am I?")
     vec2 pf=c.yy, p;
@@ -201,7 +203,7 @@ void dvoronoi(in vec2 x, out float d, out vec2 ind)
 void scene(in vec3 x, out vec2 d)
 {
     vec3 y = vec3(mod(offset + x.xy, 2.*size-per_stone_offset)
-                  -size-.5*per_stone_offset, x.z);
+                -size-.5*per_stone_offset, x.z);
     vec2 ind = (x-y).xy/(2.*size-per_stone_offset);
     float dv;
     vec2 vi;
@@ -210,16 +212,16 @@ void scene(in vec3 x, out vec2 d)
     float ra;
     lfnoise(ind-iTime, ra);
     ra = .5+.5*ra;
-	float dd;
+    float dd;
     dbox(y.xy, size, dd);
     
     stroke(dv, .05, dv);
     //dv *= 15.;
     dd = mix(dd, -dv, clamp((iTime-70.)/5., 0., 1.));
     d.x = mix(dd, length(y.xy)-.5*min(size.x,size.y), clamp((iTime-40.)/5., 0.,1.));
-	d.x = mix(d.x, dd, clamp((iTime-60.)/5., 0.,1.));
+    d.x = mix(d.x, dd, clamp((iTime-60.)/5., 0.,1.));
     
-    zextrude(x.z, -d.x,mix(0.,.5*ra,clamp((iTime-25.)/5., 0.,1.)), d.x);
+    zextrude(x.z, -d.x,mix(0.,.25*ra,clamp((iTime-25.)/5., 0.,1.)), d.x);
     d.y = 1.;
     
     // Add guard objects for debugging
@@ -248,7 +250,7 @@ void normal(in vec3 x, out vec3 n)
 void colorize(in vec2 uv, out vec3 col)
 {
     vec2 origin = .5*vec2(cos(iTime),sin(iTime)),
-    	x = mod(offset + uv, 2.*size-per_stone_offset)-size-.5*per_stone_offset,
+        x = mod(offset + uv, 2.*size-per_stone_offset)-size-.5*per_stone_offset,
         dx,
         xind = (uv - x) / (size+.5*per_stone_offset);
     vec2 vi;
@@ -291,8 +293,12 @@ void colorize(in vec2 uv, out vec3 col)
         sda.x = sdf.x;
         sda.gba = mix(sdf.gba, sdf.agb, dx.x);
         sdf = mix(sdf, sda, clamp((iTime-20.)/5.*step(scale,0.), 0., 1.));
+        
+        //sda.x = sdf.x;
+        //sda.gba = mix(sdf.agb, sdf.gab, dx.x);
+        //sdf = mix(sdf, sda, clamp((iTime-25.)/5., 0., 1.)*step(scale,0.));
     }    
-	col = sdf.gba*step(sdf.x,0.);
+    col = sdf.gba*step(sdf.x,0.);
     
     mat3 RR;
     vec3 rrt;
@@ -315,20 +321,23 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     uv += mix(c.yy,.1*dx, clamp((iTime-45.)/5.,0.,1.));
     
     size *= mix(1., .5, clamp((iTime-30.)/5.,0.,1.));
-    size += size*mix(c.yy, .5*dx, clamp((iTime-110.)/5.,0.,1.));
+    float la;
+    lfnoise(c.xx+.5*iTime, la);
+    size += size*mix(0., .5*la, clamp((iTime-110.)/5.,0.,1.));
     
     colorize(uv, col);
     if(iTime > 25.) // Raymarch blocks
     {
         vec3 o = c.yyx+mix(c.yyy,-1.*c.yxy,clamp((iTime-50.)/5.,0.,1.)), dir = normalize(vec3(uv,0.)-o), y;
-        float da = .5;
+        float da = (.25-o.z)/dir.z;
         vec2 s;
-        int N = 300, i;
+        int N = 100, i;
         for(i=0; i<N; ++i)
         {
             y = o + da * dir;
             scene(y, s);
             if(s.x < 1.e-3) break;
+            //if(y.z < 0.) break;
             da += s.x;
         }
         if(i < N)
@@ -339,19 +348,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
             colorize(y.xy, ci);
             col = mix(col, ci, clamp((iTime-25.)/5.,0.,1.));
             ci = .3*c.xxx
-                 + .3*c.yyx*abs(dot(l,n))
-                 + .3*c.xyx*pow(abs(dot(reflect(-l,n),dir)),3.);
+                + .3*c.yyx*abs(dot(l,n))
+                + .3*c.xyx*pow(abs(dot(reflect(-l,n),dir)),3.);
             col = mix(col, .2*c.yyx, clamp(y.z*.5,0.,1.));
             mat3 RR;
             vec3 rrt;
-    		vec2 x = mod(offset + uv, 2.*size-per_stone_offset)-size-.5*per_stone_offset,
-		        xind = (uv - x) / (size+.5*per_stone_offset);
+            vec2 x = mod(offset + uv, 2.*size-per_stone_offset)-size-.5*per_stone_offset,
+                xind = (uv - x) / (size+.5*per_stone_offset);
             vec2 vi;
             float dv;
-        	dvoronoi(y.xy/size*.5, dv, vi);
+            dvoronoi(y.xy/size*.5, dv, vi);
             stroke(dv, .1, dv);
             ci = mix(ci, .2*ci, step(dv,0.)*clamp((iTime-75.)/5.,0.,1.));
-        	xind = mix(xind, vi, clamp((iTime-70.)/5., 0., 1.));
+            xind = mix(xind, vi, clamp((iTime-70.)/5., 0., 1.));
             lfnoise(xind + iTime*c.xx, rrt.x);
             lfnoise(xind + 1.1*iTime*c.xx, rrt.y);
             lfnoise(xind + 1.2*iTime*c.xx, rrt.z);
@@ -359,6 +368,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
             col += abs(RR *ci);
         }
     }
+    
+    
+    // 1: Show pattern only in stone borders
+    // 2: Show party lights on stones
+    // 3: Show rays that make party lights
+    // 4: Move stones onto each other
+    // 5: Make stones 3D and bounce
+    // 6: Add fractal stuff
     
     vec3 ddd;
     rand(uv-iTime*c.xx, ddd.x);
@@ -369,4 +386,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     col = clamp(col, 0.,1.);
     
     fragColor = vec4(col,1.0);
+}
+
+void main()
+{
+    mainImage(gl_FragColor, gl_FragCoord.xy);
 }
