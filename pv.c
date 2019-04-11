@@ -133,7 +133,7 @@ post_channel0_location, post_fsaa_location;
 
 float fsaa = 25.;
 
-#define duration 600.
+#define duration 12.*60.
 
 // Demo globals
 double t_start = 0., 
