@@ -24,6 +24,7 @@ if(WIN32)
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/minification/
             COMMAND python shader-compressor.py "${PROJECT_SOURCE_DIR}/gfx/post.frag" -o "${PROJECT_SOURCE_DIR}/gfx/post.h"  --no-minification 
             COMMAND python shader-compressor.py "${PROJECT_SOURCE_DIR}/gfx/urban_flow.frag" -o "${PROJECT_SOURCE_DIR}/gfx/urban_flow.h"  --no-minification
+            COMMAND python shader-compressor.py "${PROJECT_SOURCE_DIR}/gfx/shapes.frag" -o "${PROJECT_SOURCE_DIR}/gfx/shapes.h"  --no-minification
             )
     add_definitions(/Gy /O1 /fp:fast /GR- /GS- /MT)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:demo /SUBSYSTEM:Windows  /OPT:REF  /OPT:ICF=10 /VERBOSE /NODEFAULTLIB") 
