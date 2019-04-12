@@ -167,17 +167,17 @@ DWORD WINAPI LoadUrbanFlowThread(LPVOID lpParam)
 {
     #undef VAR_IRESOLUTION
     #undef VAR_ITIME
-    #include "gfx/shapes.h"
+    #include "gfx/true_love.h"
     #ifndef VAR_IRESOLUTION
     #define VAR_IRESOLUTION "iResolution"
     #endif
     #ifndef VAR_ITIME
     #define VAR_ITIME "iTime"
     #endif
-    int urban_flow_size = strlen(shapes_frag),
+    int urban_flow_size = strlen(true_love_frag),
     urban_flow_handle = glCreateShader(GL_FRAGMENT_SHADER);
     urban_flow_program = glCreateProgram();
-    glShaderSource(urban_flow_handle, 1, (GLchar **)&shapes_frag, &urban_flow_size);
+    glShaderSource(urban_flow_handle, 1, (GLchar **)&true_love_frag, &urban_flow_size);
     glCompileShader(urban_flow_handle);
     printf("---> Urban Flow shader:\n");
     debug(urban_flow_handle);
